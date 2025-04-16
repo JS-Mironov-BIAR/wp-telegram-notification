@@ -11,6 +11,8 @@ export default async function formEventsClick(e, form) {
         console.warn('wtn_ajax не определён')
         return
     }
+    const wrapper = form.closest('.wtn-form-wrapper')
+    if (wrapper) wrapper.classList.add('loading')
 
     const data = new FormData(form)
     data.append('action', 'wtn_send_form')
@@ -25,15 +27,14 @@ export default async function formEventsClick(e, form) {
         const result = await response.json()
 
         if (result.success) {
-            // eslint-disable-next-line no-undef
             ModalControllers?.Status?.setSuccess?.()
             form.reset()
         } else {
-            // eslint-disable-next-line no-undef
             ModalControllers?.Status?.setError?.()
         }
     } catch (error) {
-        // eslint-disable-next-line no-undef
         ModalControllers?.Status?.setError?.()
+    } finally {
+        if (wrapper) wrapper.classList.remove('loading')
     }
 }
