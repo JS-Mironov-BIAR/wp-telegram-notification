@@ -15,33 +15,18 @@ jobs:
     if: github.event_name == 'push' || (github.event.pull_request.merged == true)
     runs-on: ubuntu-latest
     permissions:
-      actions: write   # ✅ Permission to remove artifacts and workflow runs
+      actions: write
 
     steps:
       - name: 🔄 Checkout repository
         uses: actions/checkout@v4
-
-      - name: 🛠 Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: 📦 Install dependencies
-        run: npm ci
-
-      - name: 🔢 Bump version in plugin file
-        run: node update-version.js
-
-      - name: 🔨 Build project
-        run: npm run build -- --mode=production
 
       - name: 🗑 Delete all old artifacts using GitHub API
         run: |
           echo "Fetching artifacts..."
           ARTIFACTS=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
           -H "Accept: application/vnd.github+json" \
-          "https://api.github.com/repos/${{ github.repository }}/actions/artifacts" | jq -r '.artifacts[] | select(.name=="custom-modal-controller") | .id')
+          "https://api.github.com/repos/${{ github.repository }}/actions/artifacts" | jq -r '.artifacts[] | select(.name=="wp-telegram-notification") | .id')
 
           for ID in $ARTIFACTS; do
             echo "Deleting artifact ID: $ID"
@@ -50,7 +35,7 @@ jobs:
             "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$ID"
           done
 
-      - name: 🗑 Delete old workflow runs (We leave the last 5)
+      - name: 🗑 Delete old workflow runs (keep last 5)
         run: |
           echo "Fetching workflow runs..."
           RUNS=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
@@ -69,9 +54,9 @@ jobs:
           zip -r wp-telegram-notification.zip \
           . \
           -x "node_modules/*" ".git/*" ".github/*" ".gitignore" "package-lock.json" \
-          "assets/src/*" "setup-hooks.sh" "update-version.js"
+          "webpack.config.js" "package.json" "update-version.js" "setup-hooks.sh" "assets/*"
 
-      - name: 📤 Upload ZIP artifact (direct plugin ZIP)
+      - name: 📤 Upload ZIP artifact
         uses: actions/upload-artifact@v4
         with:
           name: wp-telegram-notification

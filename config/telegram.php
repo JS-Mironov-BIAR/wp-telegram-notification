@@ -27,7 +27,7 @@ function wtn_send_telegram_message(string $message): bool {
 
 	if (!$bot_token || !$chat_ids_raw) return false;
 
-	// Поддержка разделителей: пробел, запятая, табуляция и перенос
+	// Separator support: space, comma, tab and hyphen
 	$chat_ids = preg_split('/[\s,]+/', $chat_ids_raw);
 
 	$at_least_one_sent = false;

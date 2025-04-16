@@ -26,10 +26,10 @@ function wtn_settings_page_html(): void {
 
 	// Add a help tab with Telegram setup instructions
 	$screen->add_help_tab([
-		                      'id'      => 'telegram_help',
-		                      'title'   => 'Как настроить Telegram',
-		                      'content' => '<p>Создайте бота через <a href="https://t.me/BotFather" target="_blank">@BotFather</a>, получите токен и нажмите «Обновить Chat ID».</p>',
-	                      ]);
+	    'id'      => 'telegram_help',
+	    'title'   => 'Как настроить Telegram',
+	    'content' => '<p>Создайте бота через <a href="https://t.me/BotFather" target="_blank">@BotFather</a>, получите токен и нажмите «Обновить Chat ID».</p>',
+	]);
 
 	// Include the HTML template for settings page layout
 	include __DIR__ . '/settings-page-template.php';
@@ -54,10 +54,6 @@ function wtn_register_settings(): void {
 	// Connection settings
 	register_setting('wtn_connection_group', 'wtn_bot_token');
 	register_setting('wtn_connection_group', 'wtn_chat_id');
-
-	// Optional: Form markup or message template settings
-	register_setting('wtn_form_group', 'wtn_custom_form_markup');
-	register_setting('wtn_message_group', 'wtn_custom_message_template');
 
 	// Settings section container
 	add_settings_section('wtn_main_section', '', static fn () => null, 'wtn-settings');
