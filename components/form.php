@@ -27,6 +27,8 @@ function wtn_render_form(): string {
 			<?php echo $form_html; ?>
             <input type="hidden" name="action" value="wtn_send_form">
             <input type="hidden" name="_ajax_nonce" value="<?php echo esc_attr(wp_create_nonce('wtn_form_nonce')); ?>">
+            <input type="text" name="wtn_hp_email" style="display:none !important;" tabindex="-1" autocomplete="off">
+            <input type="hidden" name="wtn_form_timestamp" value="<?php echo time(); ?>">
         </form>
 
         <div class="wtn-loader" style="display: none;">

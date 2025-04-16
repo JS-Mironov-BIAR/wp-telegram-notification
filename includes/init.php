@@ -36,6 +36,17 @@ function wtn_handle_ajax(): void {
 		wp_send_json_error('Вы должны согласиться с политикой обработки данных.');
 	}
 
+	if (!empty($_POST['wtn_hp_email'])) {
+		wp_send_json_error('Спам заблокирован');
+	}
+
+	$min_delay = 2;
+	$form_time = (int) ($_POST['wtn_form_timestamp'] ?? 0);
+	if (time() - $form_time < $min_delay) {
+		wp_send_json_error('Форма отправлена слишком быстро');
+	}
+
+
 	if (wtn_send_telegram_message($text)) {
 		wp_send_json_success();
 	} else {

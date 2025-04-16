@@ -75,10 +75,10 @@ $test_success = isset($_GET['test_send']) && $_GET['test_send'] === 'success';
                             <div style="flex: 1;">
                                 <div style="margin-bottom: 12px;">
                                     <strong>Вставить элемент:</strong><br>
-                                    <button type="button" class="wtn-insert-tag" data-tag='[text name="" placeholder="Ваше имя"]' title='Текстовое поле. Атрибуты: label, name, placeholder, class'>[text]</button>
-                                    <button type="button" class="wtn-insert-tag" data-tag='[tel name="" placeholder="Ваш телефон"]' title='Телефон. Атрибуты: label, name, placeholder, class'>[tel]</button>
-                                    <button type="button" class="wtn-insert-tag" data-tag='[email name="" placeholder="Email"]' title='Email. Атрибуты: label, name, placeholder, class'>[email]</button>
-                                    <button type="button" class="wtn-insert-tag" data-tag='[textarea name="" placeholder="Ваше сообщение"]' title='Многострочное поле. Атрибуты: label, name, placeholder, class'>[textarea]</button>
+                                    <button type="button" class="wtn-insert-tag" data-tag='[text name="" placeholder="Ваше имя"]' title='Текстовое поле. Атрибуты: required, label, name, placeholder, class'>[text]</button>
+                                    <button type="button" class="wtn-insert-tag" data-tag='[tel name="" placeholder="Ваш телефон"]' title='Телефон. Атрибуты: required, label, name, placeholder, class'>[tel]</button>
+                                    <button type="button" class="wtn-insert-tag" data-tag='[email name="" placeholder="Email"]' title='Email. Атрибуты: required, label, name, placeholder, class'>[email]</button>
+                                    <button type="button" class="wtn-insert-tag" data-tag='[textarea name="" placeholder="Ваше сообщение"]' title='Многострочное поле. Атрибуты: required, label, name, placeholder, class'>[textarea]</button>
                                     <button type="button" class="wtn-insert-tag" data-tag='[send text="Отправить" class="btn"]' title='Кнопка отправки. Атрибуты: text, class'>[send]</button>
                                     <button type="button" id="wtn-undo-btn" style="margin-left: 16px;">↩️ Отменить</button>
                                     <button type="button" id="wtn-redo-btn">↪️ Повторить</button>
@@ -239,19 +239,24 @@ $test_success = isset($_GET['test_send']) && $_GET['test_send'] === 'success';
                 const wrapWithLabel = (tag, attrs, isTextarea = false, isCheckbox = false) => {
                     const labelMatch = attrs.match(/label="([^"]+)"/)
                     const label = labelMatch ? labelMatch[1] : null
+
+                    const isRequired = /required(?:\s*=\s*"?(true|1)?"?)?/.test(attrs)
+                    const requiredMark = isRequired ? '<span style="color:#e11d48; margin-left:4px;">*</span>' : ''
+                    const requiredAttr = isRequired ? ' aria-required="true"' : ''
+
                     const cleanAttrs = attrs.replace(/label="[^"]*"/, '').trim()
 
                     let inputHtml
                     if (isTextarea) {
-                        inputHtml = `<textarea ${cleanAttrs}></textarea>`
+                        inputHtml = `<textarea ${cleanAttrs}${requiredAttr}></textarea>`
                     } else if (isCheckbox) {
-                        inputHtml = `<input type="checkbox" ${cleanAttrs}>`
+                        inputHtml = `<input type="checkbox" ${cleanAttrs}${requiredAttr}>`
                     } else {
-                        inputHtml = `<input ${tag} ${cleanAttrs}>`
+                        inputHtml = `<input ${tag} ${cleanAttrs}${requiredAttr}>`
                     }
 
                     return label
-                        ? `<div style="margin-bottom:10px;"><label>${isCheckbox ? `${inputHtml} ${label}` : `${label} ${inputHtml}`}</label></div>`
+                        ? `<div style="margin-bottom:10px;"><label style="display:flex;flex-direction:column;gap:4px;"><span>${label}${requiredMark}</span>${inputHtml}</label></div>`
                         : `<div style="margin-bottom:10px;">${inputHtml}</div>`
                 }
 

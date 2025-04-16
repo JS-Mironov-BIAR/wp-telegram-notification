@@ -188,3 +188,27 @@
         width: 100%;
     }
 }
+
+
+/* required field */
+
+/* --- Звёздочка обязательного поля --- */
+.wtn-required {
+    color: #e11d48; /* red-600 */
+    margin-left: 4px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.wtn-label-inline {
+    font-size: 13px;
+    color: #e11d48;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.wtn-label span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
