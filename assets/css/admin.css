@@ -1,0 +1,22 @@
+#wtn-chat-sync-status {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #0073aa;
+}
+
+.metabox-holder {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.postbox-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}

@@ -16,10 +16,10 @@ if (!defined('ABSPATH')) {
 }
 
 // Core admin pages
+require_once plugin_dir_path(__FILE__) . 'admin/assets.php';
 require_once plugin_dir_path(__FILE__) . 'admin/settings.php';
 require_once plugin_dir_path(__FILE__) . 'admin/chat-sync.php';
 require_once plugin_dir_path(__FILE__) . 'admin/test-send.php';
 
 // Telegram logic and sync
-require_once plugin_dir_path(__FILE__) . 'includes/assets.php';
 require_once plugin_dir_path(__FILE__) . 'includes/init.php';
