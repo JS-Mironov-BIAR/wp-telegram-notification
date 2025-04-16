@@ -4,3 +4,65 @@
     gap: 12px;
     max-width: 400px;
 }
+
+.wtn-form-wrapper {
+    position: relative;
+}
+
+.wtn-form-wrapper.loading .wtn-form {
+    filter: blur(2px);
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.wtn-form-wrapper .wtn-loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -24px 0 0 -24px;
+    z-index: 10;
+    display: none;
+    width: 48px;
+    height: 48px;
+}
+
+.wtn-form-wrapper.loading .wtn-loader {
+    display: block !important;
+}
+
+
+@keyframes wtn-spin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.wtn-spinner {
+    animation: wtn-rotate 1s linear infinite;
+}
+
+@keyframes wtn-rotate {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.wtn-spinner-path {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: 0;
+    animation: wtn-dash 1.5s ease-in-out infinite;
+}
+
+@keyframes wtn-dash {
+    0% {
+        stroke-dasharray: 1, 150;
+        stroke-dashoffset: 0;
+    }
+    50% {
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: -35;
+    }
+    100% {
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: -124;
+    }
+}

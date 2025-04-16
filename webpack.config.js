@@ -14,7 +14,6 @@ const isProduction = NODE_ENV === 'production'
 module.exports = {
     entry: {
         main: './assets/src/index.js',
-        // : './assets/src/global.js',
     },
     output: {
         filename: isProduction ? '[name].min.js' : '[name].js',
