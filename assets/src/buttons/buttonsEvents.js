@@ -1,4 +1,5 @@
 import customFetch from '../utils/customFetch'
+import autoHideStatus from '../utils/autoHideStatus'
 
 export async function buttonSyncEventsClick(e, syncBtn) {
     const statusBox = document.querySelector('#wtn-chat-sync-status')
@@ -8,7 +9,6 @@ export async function buttonSyncEventsClick(e, syncBtn) {
 
     e.preventDefault()
     syncBtn.disabled = true
-    statusBox.classList.add('fade-out')
     statusBox.textContent = '⏳ Получение ID...'
 
     try {
@@ -24,11 +24,7 @@ export async function buttonSyncEventsClick(e, syncBtn) {
         statusBox.textContent = '🚫 Ошибка запроса'
     } finally {
         syncBtn.disabled = false
-
-        setTimeout(() => {
-            statusBox.textContent = ''
-            statusBox.classList.remove('fade-out')
-        }, 5000)
+        autoHideStatus(statusBox)
     }
 }
 
@@ -38,7 +34,6 @@ export async function buttonTestEventsClick(e, testBtn) {
     if (!testStatus || !testBtn) return
 
     e.preventDefault()
-    testStatus.classList.add('fade-out')
     testStatus.textContent = '⏳ Отправка...'
     testBtn.disabled = true
 
@@ -54,9 +49,6 @@ export async function buttonTestEventsClick(e, testBtn) {
         testStatus.textContent = '🚫 Ошибка запроса'
     } finally {
         testBtn.disabled = false
-        setTimeout(() => {
-            testStatus.textContent = ''
-            testStatus.classList.remove('fade-out')
-        }, 5000)
+        autoHideStatus(testStatus)
     }
 }
