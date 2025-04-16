@@ -32,6 +32,10 @@ function wtn_handle_ajax(): void {
 		'[message]' => $message,
 	]);
 
+	if (empty($_POST['consent'])) {
+		wp_send_json_error('Вы должны согласиться с политикой обработки данных.');
+	}
+
 	if (wtn_send_telegram_message($text)) {
 		wp_send_json_success();
 	} else {

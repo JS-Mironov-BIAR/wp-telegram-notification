@@ -75,10 +75,10 @@ $test_success = isset($_GET['test_send']) && $_GET['test_send'] === 'success';
                             <div style="flex: 1;">
                                 <div style="margin-bottom: 12px;">
                                     <strong>Вставить элемент:</strong><br>
-                                    <button type="button" class="wtn-insert-tag" data-tag='[text name="" placeholder="Ваше имя"]' title='Текстовое поле. Атрибуты: name, placeholder, class'>[text]</button>
-                                    <button type="button" class="wtn-insert-tag" data-tag='[tel name="" placeholder="Ваш телефон"]' title='Телефон. Атрибуты: name, placeholder, class'>[tel]</button>
-                                    <button type="button" class="wtn-insert-tag" data-tag='[email name="" placeholder="Email"]' title='Email. Атрибуты: name, placeholder, class'>[email]</button>
-                                    <button type="button" class="wtn-insert-tag" data-tag='[textarea name="" placeholder="Ваше сообщение"]' title='Многострочное поле. Атрибуты: name, placeholder, class'>[textarea]</button>
+                                    <button type="button" class="wtn-insert-tag" data-tag='[text name="" placeholder="Ваше имя"]' title='Текстовое поле. Атрибуты: label, name, placeholder, class'>[text]</button>
+                                    <button type="button" class="wtn-insert-tag" data-tag='[tel name="" placeholder="Ваш телефон"]' title='Телефон. Атрибуты: label, name, placeholder, class'>[tel]</button>
+                                    <button type="button" class="wtn-insert-tag" data-tag='[email name="" placeholder="Email"]' title='Email. Атрибуты: label, name, placeholder, class'>[email]</button>
+                                    <button type="button" class="wtn-insert-tag" data-tag='[textarea name="" placeholder="Ваше сообщение"]' title='Многострочное поле. Атрибуты: label, name, placeholder, class'>[textarea]</button>
                                     <button type="button" class="wtn-insert-tag" data-tag='[send text="Отправить" class="btn"]' title='Кнопка отправки. Атрибуты: text, class'>[send]</button>
                                     <button type="button" id="wtn-undo-btn" style="margin-left: 16px;">↩️ Отменить</button>
                                     <button type="button" id="wtn-redo-btn">↪️ Повторить</button>
@@ -131,11 +131,13 @@ $test_success = isset($_GET['test_send']) && $_GET['test_send'] === 'success';
                             <strong>Добавить переменную:</strong><br>
                             <button type="button" class="wtn-insert-message-tag" data-tag="[name]" title="Имя отправителя">[name]</button>
                             <button type="button" class="wtn-insert-message-tag" data-tag="[phone]" title="Телефон отправителя">[phone]</button>
-                            <button type="button" class="wtn-insert-message-tag" data-tag="[email]" title="Email отправителя">[email]</button>
+                            <button type="button" class="wtn-insert-message-tag" data-tag="[email]" title="Email.">[email]</button>
                             <button type="button" class="wtn-insert-message-tag" data-tag="[message]" title="Сообщение">[message]</button>
+                            <button type="button" class="wtn-insert-message-tag" data-tag="[consent]" title="Чекбокс, Согласие с политикой">[consent]</button>
                             <button type="button" id="wtn-msg-undo-btn" style="margin-left: 16px;">↩️ Отменить</button>
                             <button type="button" id="wtn-msg-redo-btn">↪️ Повторить</button>
                         </div>
+
 
                         <form method="post" action="options.php">
 		                    <?php
@@ -228,12 +230,37 @@ $test_success = isset($_GET['test_send']) && $_GET['test_send'] === 'success';
             let historyStack = []
             let redoStack = []
 
+            /**
+             * Парсит текст шаблона и преобразует кастомные теги в HTML с поддержкой label и checkbox
+             * @param {string} text
+             * @returns {string}
+             */
             const parseTemplate = (text) => {
+                const wrapWithLabel = (tag, attrs, isTextarea = false, isCheckbox = false) => {
+                    const labelMatch = attrs.match(/label="([^"]+)"/)
+                    const label = labelMatch ? labelMatch[1] : null
+                    const cleanAttrs = attrs.replace(/label="[^"]*"/, '').trim()
+
+                    let inputHtml
+                    if (isTextarea) {
+                        inputHtml = `<textarea ${cleanAttrs}></textarea>`
+                    } else if (isCheckbox) {
+                        inputHtml = `<input type="checkbox" ${cleanAttrs}>`
+                    } else {
+                        inputHtml = `<input ${tag} ${cleanAttrs}>`
+                    }
+
+                    return label
+                        ? `<div style="margin-bottom:10px;"><label>${isCheckbox ? `${inputHtml} ${label}` : `${label} ${inputHtml}`}</label></div>`
+                        : `<div style="margin-bottom:10px;">${inputHtml}</div>`
+                }
+
                 return text
-                    .replace(/\[text (.*?)\]/g, (_, attrs) => `<div style="margin-bottom:10px;"><input type="text" ${attrs}></div>`)
-                    .replace(/\[tel (.*?)\]/g, (_, attrs) => `<div style="margin-bottom:10px;"><input type="tel" ${attrs}></div>`)
-                    .replace(/\[email (.*?)\]/g, (_, attrs) => `<div style="margin-bottom:10px;"><input type="email" ${attrs}></div>`)
-                    .replace(/\[textarea (.*?)\]/g, (_, attrs) => `<div style="margin-bottom:10px;"><textarea ${attrs}></textarea></div>`)
+                    .replace(/\[text (.*?)\]/g, (_, attrs) => wrapWithLabel('type="text"', attrs))
+                    .replace(/\[tel (.*?)\]/g, (_, attrs) => wrapWithLabel('type="tel"', attrs))
+                    .replace(/\[email (.*?)\]/g, (_, attrs) => wrapWithLabel('type="email"', attrs))
+                    .replace(/\[textarea (.*?)\]/g, (_, attrs) => wrapWithLabel('', attrs, true))
+                    .replace(/\[checkbox (.*?)\]/g, (_, attrs) => wrapWithLabel('', attrs, false, true))
                     .replace(/\[send (.*?)\]/g, (_, attrs) => {
                         const textMatch = attrs.match(/text="([^"]+)"/)
                         const btnText = textMatch ? textMatch[1] : 'Отправить'
@@ -249,7 +276,7 @@ $test_success = isset($_GET['test_send']) && $_GET['test_send'] === 'success';
                 const current = textarea.value
                 if (historyStack.length === 0 || historyStack[historyStack.length - 1] !== current) {
                     historyStack.push(current)
-                    redoStack = [] // Очистить redo при новом действии
+                    redoStack = []
                 }
             }
 
@@ -297,7 +324,7 @@ $test_success = isset($_GET['test_send']) && $_GET['test_send'] === 'success';
                 })
             }
 
-            // Горячие клавиши Ctrl+Z / Ctrl+Y
+            // Ctrl+Z / Ctrl+Y горячие клавиши
             textarea.addEventListener('keydown', (e) => {
                 if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
                     e.preventDefault()
@@ -309,11 +336,12 @@ $test_success = isset($_GET['test_send']) && $_GET['test_send'] === 'success';
                 }
             })
 
-            // Инициализация
+            // Init
             saveToHistory()
             updatePreview()
         })
     </script>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
