@@ -5,7 +5,7 @@
  * @param {Object} additionalParams - any additional parameters
  * @returns {Promise<object>} - JSON result
  */
-export async function customFetch(action, additionalParams = {}) {
+export default async function customFetch(action, additionalParams = {}) {
     const params = new URLSearchParams({
         action,
         _ajax_nonce: wtn_admin.nonce,

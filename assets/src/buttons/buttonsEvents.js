@@ -1,4 +1,4 @@
-import { customFetch } from '../utils/customFetch'
+import customFetch from '../utils/customFetch'
 
 export async function buttonSyncEventsClick(e, syncBtn) {
     const statusBox = document.querySelector('#wtn-chat-sync-status')
@@ -8,6 +8,7 @@ export async function buttonSyncEventsClick(e, syncBtn) {
 
     e.preventDefault()
     syncBtn.disabled = true
+    statusBox.classList.add('fade-out')
     statusBox.textContent = '⏳ Получение ID...'
 
     try {
@@ -27,7 +28,7 @@ export async function buttonSyncEventsClick(e, syncBtn) {
         setTimeout(() => {
             statusBox.textContent = ''
             statusBox.classList.remove('fade-out')
-        }, 500)
+        }, 5000)
     }
 }
 
@@ -37,6 +38,7 @@ export async function buttonTestEventsClick(e, testBtn) {
     if (!testStatus || !testBtn) return
 
     e.preventDefault()
+    testStatus.classList.add('fade-out')
     testStatus.textContent = '⏳ Отправка...'
     testBtn.disabled = true
 
@@ -55,6 +57,6 @@ export async function buttonTestEventsClick(e, testBtn) {
         setTimeout(() => {
             testStatus.textContent = ''
             testStatus.classList.remove('fade-out')
-        }, 500)
+        }, 5000)
     }
 }
