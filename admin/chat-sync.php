@@ -53,3 +53,42 @@ function wtn_merge_chat_ids_from_api(): void {
 	wp_safe_redirect(admin_url('options-general.php?page=wtn-settings&chat_sync=success'));
 	exit;
 }
+
+add_action('wp_ajax_wtn_chat_sync_ajax', 'wtn_chat_sync_ajax_handler');
+
+function wtn_chat_sync_ajax_handler(): void {
+	check_ajax_referer('wtn_chat_sync_nonce');
+
+	if (!current_user_can('manage_options')) {
+		wp_send_json_error('Недостаточно прав');
+	}
+
+	$existing = get_option('wtn_chat_id') ?: '';
+	$existing_ids = preg_split('/[\s,]+/', $existing, -1, PREG_SPLIT_NO_EMPTY);
+
+	$new_ids = wtn_fetch_telegram_chat_ids();
+	$merged = array_unique(array_merge($existing_ids, $new_ids));
+
+	update_option('wtn_chat_id', implode(',', $merged));
+
+	wp_send_json_success($merged);
+}
+
+add_action('wp_ajax_wtn_test_send_ajax', 'wtn_test_send_ajax_handler');
+
+function wtn_test_send_ajax_handler(): void {
+	check_ajax_referer('wtn_chat_sync_nonce'); // Можно переиспользовать тот же nonce
+
+	if (!current_user_can('manage_options')) {
+		wp_send_json_error('Недостаточно прав');
+	}
+
+	$message = '✅ Это тестовое сообщение от WP Telegram Notification!';
+	$result = function_exists('wtn_send_telegram_message') && wtn_send_telegram_message($message);
+
+	if ($result) {
+		wp_send_json_success();
+	} else {
+		wp_send_json_error('Ошибка при отправке');
+	}
+}

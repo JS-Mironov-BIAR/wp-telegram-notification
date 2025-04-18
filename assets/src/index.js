@@ -1,5 +1,7 @@
-import initFormHandler from './form/formHandler'
+import initAdminButtonHandler from './buttons/buttonsHandler'
+import initAdminNoticesHandler from './notices/noticesHandler'
 
 document.addEventListener('DOMContentLoaded', () => {
-    initFormHandler()
+    initAdminButtonHandler()
+    initAdminNoticesHandler()
 })
